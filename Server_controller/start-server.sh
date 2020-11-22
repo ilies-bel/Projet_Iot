@@ -2,4 +2,4 @@
 
 sleep 5
 
-python /home/ilies/Projets/IOT/controller.py
+python3 /home/ilies/Projets/IOT/controller.py

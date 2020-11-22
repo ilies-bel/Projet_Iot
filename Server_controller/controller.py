@@ -5,9 +5,11 @@ import argparse
 import signal
 import sys
 import socket
-import SocketServer
+import socketserver
 import serial
 import threading
+
+import db_control
 
 HOST           = "0.0.0.0"
 UDP_PORT       = 10000
@@ -15,8 +17,7 @@ MICRO_COMMANDS = ["TL" , "LT"]
 FILENAME        = "values.txt"
 LAST_VALUE      = ""
 
-class ThreadedUDPRequestHandler(SocketServer.BaseRequestHandler):
-
+class ThreadedUDPRequestHandler(socketserver.BaseRequestHandler): #gestion des messages reçu via UDP
     def handle(self):
         data = self.request[0].strip()
         socket = self.request[1]
@@ -28,11 +29,11 @@ class ThreadedUDPRequestHandler(SocketServer.BaseRequestHandler):
                                 
                         elif data == "getValues()": # Sent last value received from micro-controller
                                 socket.sendto(LAST_VALUE, self.client_address) 
-                                # TODO: Create last_values_received as global variable      
+                                    
                         else:
                                 print("Unknown message: ",data)
 
-class ThreadedUDPServer(SocketServer.ThreadingMixIn, SocketServer.UDPServer):
+class ThreadedUDPServer(socketserver.ThreadingMixIn, socketserver.UDPServer):
     pass
 
 
@@ -56,7 +57,7 @@ def initUART():
         ser.rtscts = False     #disable hardware (RTS/CTS) flow control
         ser.dsrdtr = False       #disable hardware (DSR/DTR) flow control
         #ser.writeTimeout = 0     #timeout for write
-        print 'Starting Up Serial Monitor'
+        print('Starting Up Serial Monitor')
         try:
                 ser.open()
         except serial.SerialException:
@@ -64,16 +65,16 @@ def initUART():
                 exit()
 
 
-
+ 
 def sendUARTMessage(msg):
     ser.write(msg)
     print("Message <" + msg + "> sent to micro-controller." )
 
 
 # Main program logic follows:
-if __name__ == '__main__':
+if __name__ == '__main__': 
         initUART()
-        f= open(FILENAME,"a")
+        #f= open(FILENAME,"a")
         print ('Press Ctrl-C to quit.')
 
         server = ThreadedUDPServer((HOST, UDP_PORT), ThreadedUDPRequestHandler)
@@ -88,12 +89,14 @@ if __name__ == '__main__':
                         # time.sleep(100)
                         if (ser.inWaiting() > 0): # if incoming bytes are waiting 
                                 data_str = ser.read(ser.inWaiting()) 
-                                f.write(data_str)
+                                #f.write(data_str)
+                                db_control.Db_Add_data(data_str)
                                 LAST_VALUE = data_str
                                 print(data_str)
         except (KeyboardInterrupt, SystemExit):
                 server.shutdown()
                 server.server_close()
-                f.close()
+                #f.close()
+                db_control.Db_close
                 ser.close()
                 exit()
