@@ -14,7 +14,7 @@ import db_control
 HOST           = "0.0.0.0"
 UDP_PORT       = 10000
 MICRO_COMMANDS = ["TL" , "LT"]
-FILENAME        = "values.txt"
+#FILENAME        = "values.txt"
 LAST_VALUE      = ""
 
 class ThreadedUDPRequestHandler(socketserver.BaseRequestHandler): #gestion des messages reçu via UDP
