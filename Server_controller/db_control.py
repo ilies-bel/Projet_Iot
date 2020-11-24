@@ -1,53 +1,64 @@
 import sqlite3
 import json
+from influxdb import InfluxDBClient
+from influxdb.exceptions import InfluxDBClientError, InfluxDBServerError
 from datetime import datetime
+ 
 
-DB_PATH = 'db/server_data.db'
+DB_HOST = 'localhost'
+DB_PORT = '8086'
 
 
 def Db_connect():
-    connection = None
+
+
     try:
-        connection = sqlite3.connect(DB_PATH)
-    except sqlite3.Error as e:
-        print("An error occurred:", e.args[0])
-    return connection
+        client = InfluxDBClient(host=DB_HOST, port=DB_PORT)
+    except :
+        print("Unable to connect to database")
+    return client
 
-
-def Db_close():
-    sqlite3.connect(DB_PATH).close()
 
 
 def Db_Add_data(data):  # Permet d'ajouter une ligne a la BDD a partir d'un objet JSON
-    dbRow = []
+    payload = []
+
+    client = Db_connect()
+    client.switch_database("data")
+
     try:
         parsedData = json.loads(data)
-
+        now = str(datetime.now())
         # conversion temperature en Kelvin pour ajout en base
-        value = float(parsedData["Value"])
-        dataType = parsedData["Type"]
+        value = float(parsedData["value"])
+        dataType = parsedData["type"]
         if (dataType == "T"):
             value = value + 273.15
 
-        dbRow.append(value)
-        dbRow.append(dataType)
-        dbRow.append(datetime.now())
-        dbRow.append(parsedData["User"])
+        dbRow = {
+            'measurement' : value,
+            'type' : dataType,
+            'time': now ,
+            'userId' : parsedData["user"],
+        }
+        
+        payload.append(dbRow)
+        print(payload)
+        
+        client.write_points(dbRow)
 
-        connection = Db_connect()
-        cursor = connection.cursor()
-
-        cursor.execute('INSERT INTO data ( Value,Type,Date,UserId) VALUES (?,?,?,?)', dbRow)
-        connection.commit()
-    except :
-        print("The message is not in JSON format : ", data)
+    except (InfluxDBClientError, InfluxDBServerError) as e:
+        print("unable to write on database : ", e)
 
 
+
+''''
 def Db_displayData():
-    connection = Db_connect()
-    cursor = connection.cursor()
+    
+    client = Db_connect()
     cursor.execute('SELECT * FROM data')
     print(cursor.fetchall())
+'''''
 
 
 # ----------------------------Testing Zone
@@ -63,3 +74,20 @@ Db_displayData()
 Db_close()
 # print(datetime.now())
 '''''
+# JSON data test
+x = '{ "value":"12", "type":"T", "user":"1"}'
+
+
+client = Db_connect()
+Db_Add_data(x)
+
+results = client.query('SELECT * FROM "data"."autogen"."brushEvents" WHERE time > now() - 1d')
+points = results.get_points()
+
+#print(client.get_list_database())
+#client.switch_database("data")
+
+#points = results.get_points(tags={'userId': '1'})
+#for point in points:
+#print("Time: %s, Duration: %i" % (point['time'], point['duration']))
+

@@ -1,5 +1,9 @@
 #!/bin/sh
 
+
+service influxdb start
+influx
+
 sleep 5
 
-python3 /home/ilies/Projets/IOT/controller.py
+python3 controller.py
