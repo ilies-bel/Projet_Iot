@@ -2,7 +2,7 @@
 
 
 service influxdb start
-influx
+#influx
 
 sleep 2
 python3 controller.py

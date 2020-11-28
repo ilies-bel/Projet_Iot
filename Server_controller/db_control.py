@@ -98,7 +98,7 @@ Db_close()
 x = '{ "value":"15", "type":"T", "sensor":"1"}'
 
 
-Db_Add_data(x)
+#Db_Add_data(x)
 
 '''
 client.switch_database('data')
