@@ -42,7 +42,7 @@ class ThreadedUDPServer(socketserver.ThreadingMixIn, socketserver.UDPServer):
 
 
 # send serial message
-SERIALPORT = "/dev/tty"
+SERIALPORT = "/dev/ttyACM0"
 BAUDRATE = 115200
 ser = serial.Serial()
 
@@ -96,9 +96,9 @@ if __name__ == '__main__':
                 data_str = ser.read(ser.inWaiting())
                 # f.write(data_str)
                 # db_control.Db_Add_data(data_str)
-                print(str(data_str, 'UTF-8'))
+                print(data_str.decode())
                 LAST_VALUE = data_str
-                print(data_str)
+                # print(data_str)
     except (KeyboardInterrupt, SystemExit):
         server.shutdown()
         server.server_close()
