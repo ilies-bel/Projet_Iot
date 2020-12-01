@@ -1,6 +1,7 @@
 from ssd1306 import initialize, clear_oled
 from ssd1306_text import add_text
 from microbit import *
+import radio
 
 L1 = 0
 L2 = 2
@@ -19,6 +20,20 @@ def recupval_L():
     Lum = display.read_light_level()
     text_Lum = "Lum = " + str(Lum)
     return text_Lum
+
+def radio_contact(): #Fonction d'envoi de données et réception de réponses
+    radio.on()
+    data_t = recupval_t()
+    radio.send(data_t)
+    data_L = recupval_L()
+    radio.send(data_L)
+    while radio.receive() != "ACK":
+        sleep(10)
+    display.scroll("ACK")
+    radio.off()
+    sleep(10)
+
+
 
 while True:
     txt_Temp = recupval_t()
