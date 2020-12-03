@@ -6,7 +6,7 @@ import radio
 PIN = "1245"
 L1 = 0
 L2 = 2
-SENSOR_ID = "99"
+SENSOR_ID = "01"
 STATUS = "TL"
 
 initialize(pinReset=pin0)
@@ -56,7 +56,7 @@ oled_init()
 radio.on()
 radio.config(channel=1)
 radio.config(power=7)
-radio.send(PIN)
+radio.send(SENSOR_ID + "/ask/"+ PIN)
 
 while True:
         message = radio.receive()
