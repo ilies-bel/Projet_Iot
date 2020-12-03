@@ -1,4 +1,4 @@
-#### BELDJILALI Ilies, CHAPUIS Flavian, FOLLÉAS Brice, GAUTHIER Gwendal, GONNET Anthony
+#### BELDJILALI Ilies, CHAPUIS Flavian, FOLLÉAS Brice, GAUTIER Gwendal, GONNET Anthony
 
 # Projet_Iot
 
