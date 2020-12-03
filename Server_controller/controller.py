@@ -69,6 +69,20 @@ def initUART():
         print("Serial {} port not available".format(SERIALPORT))
         exit()
 
+def ser_decode(codedMessage):
+    message = 0 #TODO
+    return(message)
+
+def ser_listen(message):
+    messageType = message[1]
+    messageContent = message[2]
+    if (messageType == "data"):
+        db_control.Db_Add_data(messageContent)
+        print(messageContent)
+    if (messageType == "error"):
+        print(messageContent)
+
+
 
 def sendUARTMessage(msg):
     ser.write(msg)
@@ -78,7 +92,6 @@ def sendUARTMessage(msg):
 # Main program logic follows:
 if __name__ == '__main__':
     initUART()
-    #f= open(FILENAME,"a")
     print('Press Ctrl-C to quit.')
 
     server = ThreadedUDPServer((HOST, UDP_PORT), ThreadedUDPRequestHandler)
@@ -88,21 +101,17 @@ if __name__ == '__main__':
     try:
         server_thread.start()
         print("Server started at {} port {}".format(HOST, UDP_PORT))
-        print("")
+
         while ser.isOpen():
-            # time.sleep(100)
 
             if (ser.inWaiting() > 0):  # if incoming bytes are waiting
                 data_str = ser.read(ser.inWaiting())
-                # f.write(data_str)
-                # db_control.Db_Add_data(data_str)
-                print(data_str.decode())
+                ser_listen(data_str)
+                #print(data_str.decode())
                 LAST_VALUE = data_str
-                # print(data_str)
+                #print(data_str)
     except (KeyboardInterrupt, SystemExit):
         server.shutdown()
         server.server_close()
-        # f.close()
-        # db_control.Db_close
         ser.close()
         exit()

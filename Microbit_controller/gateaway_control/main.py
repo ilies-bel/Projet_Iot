@@ -7,7 +7,7 @@ display.scroll('Uart ready')
 radio.on()
 radio.config(channel=1)        # Choose your own channel number
 radio.config(power=7)
-display.scroll('Radio ready ch 1')
+display.scroll('Radio ch 1')
 radio_waiting = False
 
 
@@ -26,6 +26,11 @@ def listen():
         display.scroll('Att')
 
 
+def radio_listen():
+    message = radio.recieve()
+    messageType = message[1]
+    messageContent = message[2]
+
 def Uart_send(msg):
     print(msg)
 
@@ -36,12 +41,14 @@ def Radio_send(msg):
 
 
 while True:
+
     if (button_a.get_presses()):
         Uart_send('Bonjour')
 
     if (button_b.get_presses()):
         Radio_send('Bonjour')
-
+    if (radio.recieve() != None ):
+        radio_listen()
     listen()
     sleep(10)  # sleep 10 ms
     
