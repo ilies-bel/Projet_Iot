@@ -44,7 +44,7 @@ def oled_set(status):
         add_text(0, L1, txt_Lum)
         STATUS = "TL"
 
-def oled_write(temp, lum)
+def oled_write(temp, lum):
 
     tempString = "Temp = " + temp
     lumString =  "Lum = " + lum
@@ -66,7 +66,7 @@ def radio_contact(): #Fonction d'envoi de données et réception de réponses
             oled_set(messageArray[2])
 
         elif messageArray[1] == "ans":
-            SESOR_ID = messageArray[2]
+            SENSOR_ID = messageArray[2]
 
         else:
             radio.send("00/error/umr")
