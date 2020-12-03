@@ -2,68 +2,48 @@ from ssd1306 import initialize, clear_oled
 from ssd1306_text import add_text
 from microbit import *
 import radio
-import string
-PIN = 1245
-radio.config(channel=1)
-radio.config(power=7)
+
+PIN = "1245"
 L1 = 0
 L2 = 2
-SENSOR_ID = 99
+SENSOR_ID = "99"
 STATUS = "TL"
 
 initialize(pinReset=pin0)
 clear_oled()
-# Les deux fonctions suivantes permettent de récupérer
-# les valeurs de la température et de la luminosité.
-# Elles sont isolées car utilisées à plusieurs endroits du code.
-
-
-def radio_init():
-    radio.send(PIN)
 
 def oled_init():
-    add_text(0, L1, "initialising")
+    add_text(0, L1, "initializing")
     add_text(0, L2, "data")
 
-def get_temp():
-    Temp = temperature()
-    text_Temp =str(Temp)
-    return text_Temp
-def get_lum():
-    Lum = display.read_light_level()
-    text_Lum = str(Lum)
-    return text_Lum    
-
-def oled_set(status):
-    if (status == "TL"):
-        add_text(0, L1, txt_Temp)
-        add_text(0, L2, txt_Lum)
-        STATUS = "LT"
-    else :
-        add_text(0, L2, txt_Temp)
-        add_text(0, L1, txt_Lum)
-        STATUS = "TL"
-
-def oled_write(temp, lum):
-
-    tempString = "Temp = " + temp
-    lumString =  "Lum = " + lum
-    add_text(0, L1, tempString)
-    add_text(0, L2, lumString)
-
-def radio_send_data():
-    temp = get_temp()
-    lum = get_lum()
-    oled_write(tempString,lumString)
-    radio.send( SENSOR_ID + "/data/T:"+ temp + "&L:" + lum)
+def radioSendData():
+    temp = str(temperature())
+    lum = str(display.read_light_level())
+    msg = SENSOR_ID + "/data/T:"+ temp + "&L:" + lum
+    radio.send(msg)
 
 
 
-def radio_contact(): #Fonction d'envoi de données et réception de réponses
-        message = radio.receive()
+def radio_contact(message): #Fonction d'envoi de données et réception de réponses
         messageArray = message.split("/")
         if messageArray[1] == "cmd":
-            oled_set(messageArray[2])
+            status = messageArray[2]
+            if (status == "TL"):
+                STATUS = "LT"
+            else :
+                STATUS = "TL"
+            temp = str(temperature())
+            lum = str(display.read_light_level())
+            txt_Temp = "Temp = " + temp
+            txt_Lum =  "Lum = " + lum
+            if (STATUS == "TL"):
+                clear_oled()
+                add_text(0, L1, txt_Temp)
+                add_text(0, L2, txt_Lum)
+            else:
+                clear_oled()
+                add_text(0, L2, txt_Temp)
+                add_text(0, L1, txt_Lum)
 
         elif messageArray[1] == "ans":
             SENSOR_ID = messageArray[2]
@@ -72,13 +52,15 @@ def radio_contact(): #Fonction d'envoi de données et réception de réponses
             radio.send("00/error/umr")
 
 
-
 oled_init()
-radio_init()
+radio.on()
+radio.config(channel=1)
+radio.config(power=7)
+radio.send(PIN)
 
 while True:
-
-
-    if (button_a.is_pressed()) or (button_b.is_pressed()):
-        clear_oled()
-
+        message = radio.receive()
+        if message != None:
+           radio_contact(message)
+        radioSendData()
+        sleep(0.1) # sleep de 100 ms
