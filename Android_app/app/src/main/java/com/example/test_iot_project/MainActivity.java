@@ -13,7 +13,11 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-
+import java.util.Arrays;
+import java.net.UnknownHostException;
+import android.os.AsyncTask;
+import android.util.Log;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -25,8 +29,8 @@ public class MainActivity extends AppCompatActivity {
     private Switch switch1;
     private EditText ipserv;
     private EditText port;
-    private String ip;
-    private String ipport;
+    private InetAddress ip;
+    private int ipport;
     private DatagramPacket packet;
     private DatagramSocket socket;
 
@@ -48,6 +52,32 @@ public class MainActivity extends AppCompatActivity {
                 /*Initialiser la com */
                 /*ip = ipserv.getText().toString();*/
                 /*ipport = port.getText().toString();*/
+                try {
+                   ip = InetAddress.getByName(ipserv.getText().toString());
+                   ipport = Integer.parseInt(port.getText().toString());
+                   socket = new DatagramSocket();
+                }
+                catch (UnknownHostException e) {
+                    e.printStackTrace();
+                }
+                catch (SocketException e) {
+                    e.printStackTrace();
+                }
+                (new ResultListener()).execute();
+                (new Thread() {
+                    @Override
+                    public void run() {
+                        byte[] buffer = "(0)".getBytes(); // Reset du serveur
+                        packet = new DatagramPacket(buffer, buffer.length, ip, ipport);
+                        try {
+                            socket.send(packet);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
+
+
                 if (switch1.isChecked()) {
                     textView1.setText("Lumière");
                     textView2.setText("Température");
@@ -63,5 +93,33 @@ public class MainActivity extends AppCompatActivity {
 
     public void run() {
 
+    }
+    class ResultListener extends AsyncTask<Void,String,Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                Log.d("Réception", "Go !");
+                byte[] buffer = new byte[3];
+                if (socket != null) {
+                    DatagramPacket p = new DatagramPacket(buffer, buffer.length);
+                    socket.receive(p);
+                    Log.d("Réception", "J'ai reçu un truc !! :D");
+                    String msg = (new String(buffer, 0, p.getLength())).trim();
+
+                    if (msg.length() > 0) {
+                        publishProgress(msg);
+                    } else {
+                        Log.d("Réception", "Message : " + msg);
+                    }
+                }
+                Log.d("Réception", "Pré-fin légitime");
+            } catch (Exception e) {
+                Log.d("Réception", "Erreur");
+                publishProgress("...une erreur ...");
+            }
+            Log.d("Réception", "Fin");
+
+            return null;
+        }
     }
 }
