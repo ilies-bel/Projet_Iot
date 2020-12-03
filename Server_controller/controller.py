@@ -28,7 +28,7 @@ class ThreadedUDPRequestHandler(socketserver.BaseRequestHandler):
             current_thread.name, self.client_address, data))
         if data != "":
             if data in MICRO_COMMANDS:  # Send message through UART
-                sendUARTMessage(data)
+                sendUARTMessage("00/cmd/" + data)
 
             elif data == "getValues()":  # Sent last value received from micro-controller
                 socket.sendto(LAST_VALUE, self.client_address)
@@ -69,24 +69,36 @@ def initUART():
         print("Serial {} port not available".format(SERIALPORT))
         exit()
 
-def ser_decode(codedMessage):
-    message = 0 #TODO
-    return(message)
-
-def ser_listen(message):
-    messageType = message[1]
-    messageContent = message[2]
-    if (messageType == "data"):
-        db_control.Db_Add_data(messageContent)
-        print(messageContent)
-    if (messageType == "error"):
-        print(messageContent)
-
 
 
 def sendUARTMessage(msg):
     ser.write(msg)
     print("Message <" + msg + "> sent to micro-controller.")
+
+
+def ser_listen(message):
+    sensorId = message[0]
+    messageType = message[1]
+    messageContent = message[2]
+
+    if (messageType == "data"):
+        dataArray = messageContent.split("&")
+        temp =  (dataArray[0]).split(":")[1]
+        lum =  (dataArray[1]).split(":")[1]
+
+        tempJson = '{ "value":" '+ temp + '", "type":"T", "sensor":"'+ sensorId +  '"}'
+        lumJson  = '{ "value":" '+ lum + '", "type":"L", "sensor":"'+ sensorId +  '"}'
+
+        db_control.Db_Add_data(tempJson)
+        db_control.Db_Add_data(lumJson)
+        print("adding data : \n" + tempJson + "\n" + lumJson)
+
+    elif (messageType == "error"):
+        print(messageContent)
+    else :
+        print("gateway unknown message : " +  message)
+
+
 
 
 # Main program logic follows:
