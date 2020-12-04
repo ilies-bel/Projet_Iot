@@ -11,7 +11,7 @@ import threading
 
 import db_control
 
-HOST = "0.0.0.0"
+HOST = "10.0.0.26"
 UDP_PORT = 10000
 MICRO_COMMANDS = ["TL", "LT"]
 #FILENAME        = "values.txt"
