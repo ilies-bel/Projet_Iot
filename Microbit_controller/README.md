@@ -6,6 +6,6 @@ Cette partie du projet va s'intéresser sur l'initialisation et le pilotage de d
 
 ## Controle de la passeralle - gateway_control.py
 
-Son utilité est d'initialisé la passerelle de chacune des microbit est attribuant un pin d'entrée pour le capteur et l'uart de la microbit.
+Son utilité est d'initialiser la passerelle de chacune des microbit est attribuant un pin d'entrée pour le capteur, et en initialisant l'uart de la microbit.
 
 4 messages radio différents sont envoyés 
