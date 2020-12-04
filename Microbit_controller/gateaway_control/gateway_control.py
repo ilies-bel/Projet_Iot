@@ -44,18 +44,20 @@ def radio_handle(message):
 
 
 def Uart_send(msg):
+    display.scroll('uart send')
     print(msg)
 
 
 while True:
 
     if (button_a.is_pressed()):
-        radio.send('00/cmd/TL')
-        print('00/cmd/TL')
+        print('00/data/T:25&L:255')
+        display.scroll('uart send')
+
 
 
     if (button_b.is_pressed()):
-        radio.send('00/cmd/LT')
+        print('00/cmd/LT')
 
     message = radio.receive()
 

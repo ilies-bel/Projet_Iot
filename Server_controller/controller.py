@@ -11,7 +11,7 @@ import threading
 
 import db_control
 
-HOST = "0.0.0.0"
+HOST = "192.168.0.20"
 UDP_PORT = 10000
 MICRO_COMMANDS = ["TL", "LT"]
 #FILENAME        = "values.txt"
@@ -21,20 +21,25 @@ LAST_VALUE = ""
 # gestion des messages reçu via UDP
 class ThreadedUDPRequestHandler(socketserver.BaseRequestHandler):
     def handle(self):
-        data = self.request[0].strip()
+        data = (self.request[0].strip())
+        data_str = data.decode()
         socket = self.request[1]
         current_thread = threading.current_thread()
-        print("{}: client: {}, wrote: {}".format(
-            current_thread.name, self.client_address, data))
-        if data != "":
-            if data in MICRO_COMMANDS:  # Send message through UART
-                sendUARTMessage("00/cmd/" + data)
+        print("{}: client: {}, wrote: {}".format(current_thread.name, self.client_address, data))
 
-            elif data == "getValues()":  # Sent last value received from micro-controller
-                socket.sendto(LAST_VALUE, self.client_address)
+        if data_str != "":
+            if data_str in MICRO_COMMANDS:  # Send message through UART
+                sendUARTMessage("00/cmd/" + data_str)
+
+            elif data_str == "getValues()":  # Sent last value received from micro-controller
+                print(LAST_VALUE)
+                
+                udpMessage = "Temp: " + LAST_VALUE + "   "
+
+                socket.sendto( bytes(udpMessage.encode('utf-8')) , self.client_address)
 
             else:
-                print("Unknown message: ", data)
+                print("Unknown message: ", data_str)
 
 
 class ThreadedUDPServer(socketserver.ThreadingMixIn, socketserver.UDPServer):
@@ -78,6 +83,8 @@ def sendUARTMessage(msg):
 
 def ser_listen(message):
     
+    global LAST_VALUE 
+
     print(message)
     messageArray = message.split("/")
 
@@ -92,6 +99,10 @@ def ser_listen(message):
         dataArray = messageContent.split("&")
         temp =  (dataArray[0]).split(":")[1]
         lum =  ((dataArray[1]).split(":")[1]).rstrip()
+
+        LAST_VALUE = temp
+        print("assign LAST VALUE " )
+        print( LAST_VALUE)
 
 
         tempJson = '{ "value":" '+ temp + '", "type":"T", "sensor":"'+ sensorId +  '"}'
@@ -132,8 +143,8 @@ if __name__ == '__main__':
             data = ser.readline()
             data_str = data.decode()
             ser_listen(data_str)
+
             #db_control.Db_Add_data(data_str)
-            LAST_VALUE = data_str
             #print(data_str)
 
     except (KeyboardInterrupt, SystemExit):
