@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private int ipport;
     private DatagramPacket packet;
     private DatagramSocket socket;
+    private String OUTPUT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,37 +48,11 @@ public class MainActivity extends AppCompatActivity {
         port = (EditText)findViewById(R.id.port);
 
         btn1.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
-                /*Initialiser la com */
-                /*ip = ipserv.getText().toString();*/
-                /*ipport = port.getText().toString();*/
-                try {
-                   ip = InetAddress.getByName(ipserv.getText().toString());
-                   ipport = Integer.parseInt(port.getText().toString());
-                   socket = new DatagramSocket();
-                }
-                catch (UnknownHostException e) {
-                    e.printStackTrace();
-                }
-                catch (SocketException e) {
-                    e.printStackTrace();
-                }
-                (new ResultListener()).execute();
-                (new Thread() {
-                    @Override
-                    public void run() {
-                        byte[] buffer = "(0)".getBytes(); // Reset du serveur
-                        packet = new DatagramPacket(buffer, buffer.length, ip, ipport);
-                        try {
-                            socket.send(packet);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();
-
-
+                OUTPUT = "getData()";
+                send();
                 if (switch1.isChecked()) {
                     textView1.setText("Lumière");
                     textView2.setText("Température");
@@ -94,32 +69,40 @@ public class MainActivity extends AppCompatActivity {
     public void run() {
 
     }
-    class ResultListener extends AsyncTask<Void,String,Void> {
-        @Override
-        protected Void doInBackground(Void... voids) {
-            try {
-                Log.d("Réception", "Go !");
-                byte[] buffer = new byte[3];
-                if (socket != null) {
-                    DatagramPacket p = new DatagramPacket(buffer, buffer.length);
-                    socket.receive(p);
-                    Log.d("Réception", "J'ai reçu un truc !! :D");
-                    String msg = (new String(buffer, 0, p.getLength())).trim();
+    protected void onPause() {
+        super.onPause();
+        socket.close();
+    }
 
-                    if (msg.length() > 0) {
-                        publishProgress(msg);
-                    } else {
-                        Log.d("Réception", "Message : " + msg);
-                    }
-                }
-                Log.d("Réception", "Pré-fin légitime");
-            } catch (Exception e) {
-                Log.d("Réception", "Erreur");
-                publishProgress("...une erreur ...");
-            }
-            Log.d("Réception", "Fin");
-
-            return null;
+    public void start() {
+        try {
+            ip = InetAddress.getByName(ipserv.getText().toString());
+            ipport = Integer.parseInt(port.getText().toString());
+            socket = new DatagramSocket();
         }
+        catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        catch (SocketException e) {
+            e.printStackTrace();
+        }
+    }
+    private void send() {
+        (new Thread(){
+            public void run() {
+                try{
+                    byte[] buffer = OUTPUT.getBytes();
+                    packet = new DatagramPacket(buffer, buffer.length, ip, ipport);
+                    Log.d("LOG", "----------------------");
+                    Log.d("IP", String.valueOf(ip));
+                    Log.d("Port", String.valueOf(ipport));
+                    Log.d("OUTPUT", OUTPUT);
+                    Log.d("LOG", "*************************");
+                    socket.send(packet);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 }
