@@ -19,7 +19,7 @@ Une partie de la configuration de l’objet est l’affichage des données sur l
 pour commencer, vous pouvez programmer votre module micro :bit afin que ce dernier affiche les données récupérées des capteurs.
 
 
-Nous avons pris pour basSi vous programmez le micro :bit en micro-python, vous disposez du code contrôleur d’un
+Si vous programmez le micro :bit en micro-python, vous disposez du code contrôleur d’un
 écran OLED Adafruit sur le git : https://github.com/CPELyon/microbit_ssd1306. Un exemple
 d’utilisation de la bibliothèque est dans le sous-dossier /samples/hello-world/.
 Dans le code donné, on utilise l’interface I2C pour pouvoir envoyer les informations à afficher,
@@ -50,6 +50,7 @@ brut dans un fichier texte, de cette façon il fera aussi le rôle de serveur.
 Puis ce dernier va écouter les requêtes du client Android par UDP :
 — Message ”getValues()” : le serveur répond à ce message en envoyant les données reçu dans
 sa passerelle au client Android sous le même format envoyé depuis l’objet (texte, JSON,...).
+
 Exemple de code serveur
 
 Le code d’un serveur effectuant les tâches demandées au point précédent est disponible sur :
