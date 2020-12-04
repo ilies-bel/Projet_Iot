@@ -25,7 +25,7 @@ sudo influxd
 
 ### Installing Grafana
 
-Pour installer Grafana sur Windows,Aller sur la [documentation d'installation](https://grafana.com/docs/grafana/latest/installation/windows/)
+Pour installer Grafana sur Windows, allez sur la [documentation d'installation](https://grafana.com/docs/grafana/latest/installation/windows/)
 
 Si vous êtes sur GNU/Linux, executez la commande suivante :
 
@@ -48,7 +48,7 @@ Passez au fichier **/Server_controller** de votre projet et lancer le serveur av
 
 Si vous rencontrez l'erreur `-bash: ./start-server.sh: /bin/sh^M: bad interpreter: No such file or directory` executez les commandes suivantes :
 
-Cette erreur est dùe au fait que votre shell n'est pas au bon format UNIX.
+Cette erreur est due au fait que votre shell n'est pas au bon format UNIX.
 Pour convertir le fichier shell, installez le paquet *dos2unix* :
 ```bash
 sudo apt-get install dos2unix && dos2unix ./start-server.sh
