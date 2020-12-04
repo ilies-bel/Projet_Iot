@@ -1,62 +1,65 @@
+#### BELDJILALI Ilies, CHAPUIS Flavian, FOLLÉAS Brice, GAUTHIER Gwendal, GONNET Anthony
+
 # Server controller 
 
 ## Installation
 
-### Installing InfluxDB
+### Installer InfluxDB
+Commencez par installer InfluxDB sur votre machine :
 
-You should first install InfluxDB on your working environment :
-
-If your booted on a Linux OS execute this command line as follow to install InfluxDB and run the service :
-
-```bash
+Si vous êtes sur un OS GNU/Linux, installez InfluDb via les commandes suivantes :
+```bash 
 sudo apt-get update && sudo apt-get install influxdb && sudo systemctl unmask influxdb.service && sudo systemctl start influxdb
  ```
 
-If your using WSL execute the following line to install InfluxDB and run the service :
-
-```bash
+Si vous utilisez WSL executez la commande suivante pour lancer le service :
+```bash 
 sudo apt-get update && sudo apt-get install influxdb && sudo systemctl unmask influxdb.service && sudo service influxdb start
  ```
 
+Si vous rencontrez un problème de connexion refusée, executez la commande suivante :
+
+```bash
+sudo influxd
+```
+
 ### Installing Grafana
 
-To install Grafana on Windows, go to the [Grafana Installation Documentation](https://grafana.com/docs/grafana/latest/installation/windows/)
+Pour installer Grafana sur Windows,Aller sur la [documentation d'installation](https://grafana.com/docs/grafana/latest/installation/windows/)
 
-Otherwise if you are installing Grafana on GNU/Linux execute the following lines :
+Si vous êtes sur GNU/Linux, executez la commande suivante :
 
 ```bash
 apt update && apt install grafana && sudo systemctl start grafana-server.service
 ```
 
-If you are using WSL use this command instead : 
+Si vous utilisez WSL, executez la commande suivante: 
 
 ```bash
 apt update && apt install grafana && sudo service grafana-server.service start
 ```
 
-## Launching the server
+## Lancer le serveur
 
-Move to **/Server_controller** of your project and then start the server with this command line : 
-
+Passez au fichier **/Server_controller** de votre projet et lancer le serveur avec :
 ```bash
- ./start-server.sh
-```
+./start-server.sh
+``` 
 
-If you encounter a `-bash: ./start-server.sh: /bin/sh^M: bad interpreter: No such file or directory` do the instructions as followed :
+Si vous rencontrez l'erreur `-bash: ./start-server.sh: /bin/sh^M: bad interpreter: No such file or directory` executez les commandes suivantes :
 
-This error is due to the fact that your file is not on a UNIX format.
-To convert this to the right format install *dos2unix* :
-
+Cette erreur est dùe au fait que votre shell n'est pas au bon format UNIX.
+Pour convertir le fichier shell, installez le paquet *dos2unix* :
 ```bash
 sudo apt-get install dos2unix && dos2unix ./start-server.sh
 ```
 
-Once your file is in the right format execute it once again.
+Une fois que votre fichier est sous le bon format, executez le à nouveau.
 
-## Viewing results on Grafana
+## Voir les données sur Grafana
 
-Once Grafana installed, go to `http://localhost:3000/` on your web browser to have access to your different dashboards and visualize your data on Grafana.
+Une fois que Grafana est installé, allez sur `http://localhost:3000/` sur votre navigateur web pour avoir accès à vos différents *dashboards* et visualiser vos données sur Grafana.
 
-Then, you have to go on `http://localhost:3000/datasources` to add a new datasource corresponding to the InfluxDB database of the project. The HTTP URL of the new datasource should be `http://localhost:8086` as 8086 is the default port of InfluxDB. If you have change it, write the new port.
+Ensuite, vous devez ajouter une source de donnée via la page sur `http://localhost:3000/datasources` et ajouter une nouvelle *datasource* qui correspond à votre base de donnée InfluxDB de votre projet. Votre URL HTTP de votre nouvelle datasource devrait être `http://localhost:8086` dans le cas où vous n'auriez pas un changer le port par défaut d'InfluxDB qui est 8086.
 
 **BELDJILALI Ilies, CHAPUIS Flavian, FOLLÉAS Brice, GAUTHIER Gwendal, GONNET Anthony**
