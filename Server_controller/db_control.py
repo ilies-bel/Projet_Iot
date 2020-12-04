@@ -1,4 +1,5 @@
 import sqlite3
+import random
 import json
 from influxdb import InfluxDBClient
 from influxdb.exceptions import InfluxDBClientError, InfluxDBServerError
@@ -34,21 +35,7 @@ def Db_Add_data(data):  # Permet d'ajouter une ligne a la BDD a partir d'un obje
         
         if (parsedData["type"] == "T"):
             dataType = "temperature"
-            
-            #value = value + 273.15
-        
-        '''
-        dbRow = {
-            'measurement': value,
-            'tags': {},
-            'type': dataType,
-            'time': now,
-            'userId': parsedData["sensor"],
-        }
-        '''
-        # payload.append(dbRow)
-        
-
+                    
         json_body = [
             {
                 "measurement": dataType,
@@ -63,55 +50,18 @@ def Db_Add_data(data):  # Permet d'ajouter une ligne a la BDD a partir d'un obje
         ]
 
         print(json_body)
-        # payload.append(data)
         
-        #client.write_points(json_body, )
         client.write_points(json_body, database='data', time_precision='ms')
 
     except (InfluxDBClientError, InfluxDBServerError) as e:
         print("unable to write on database : ", e)
 
+# ----------------------------Testing Zone 
 
-''''
-def Db_displayData():
-
-    client = Db_connect()
-    cursor.execute('SELECT * FROM data')
-    print(cursor.fetchall())
-'''''
-
-
-# ----------------------------Testing Zone
-''''
 # JSON data test
-x = '{ "Value":"12", "Type":"T", "User":"1"}'
-
-Db_Add_data(x)
-
-Db_displayData()
-
-
-Db_close()
-# print(datetime.now())
-'''''
-# JSON data test
-x = '{ "value":"15", "type":"T", "sensor":"1"}'
-
-
-#Db_Add_data(x)
-
-'''
-client.switch_database('data')
-results = client.query('SELECT * FROM temperature')
-points = results.get_points()
-
-print(points)
-'''
-
-
-# print(client.get_list_database())
-# client.switch_database("data")
-
-# points = results.get_points(tags={'userId': '1'})
-# for point in points:
-# print("Time: %s, Duration: %i" % (point['time'], point['duration']))
+"""
+for k in range(1000):
+    rand = random.randint(120,300)/10
+    x = '{ "value":"' + str(rand) + '", "type":"T", "sensor":"1"}'
+    Db_Add_data(x)
+"""
