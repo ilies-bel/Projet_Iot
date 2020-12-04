@@ -51,11 +51,14 @@ while True:
 
     if (button_a.is_pressed()):
         radio.send('00/cmd/TL')
+        print('00/cmd/TL')
+
 
     if (button_b.is_pressed()):
         radio.send('00/cmd/LT')
 
     message = radio.receive()
+
     if (message != None):
         radio_handle(message)
 
