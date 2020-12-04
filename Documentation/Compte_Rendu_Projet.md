@@ -4,7 +4,7 @@
 
 ## Exercice 1 : Mise en place du réseau TODO
 
-Dans l'objectif de définir un protocole de communication sécurisé nous souhaitons mettre en place une identification via CHAP et chiffrer notre canal de communication en utilisant l'algorithme de chiffrement AES-128.
+Dans l'objectif de définir un protocole de communication sécurisé nous souhaitions mettre en place une identification via CHAP et chiffrer notre canal de communication en utilisant l'algorithme de chiffrement AES-128. Due aux limitations technologique de la microbit nous avons mis en place un système authentification basé sur des pins codés directement dans le code source. De plus la communication entre les microbit n'est pas chiffré, la mise en plus d'un chiffrement Caesar, n'aurait fait que ralentir les processus de communications alors qu'il assure un niveau de sécurité fragile.
 
 
 ## Exercice 2 : configuration des capteurs TODO
@@ -19,13 +19,10 @@ Une partie de la configuration de l’objet est l’affichage des données sur l
 pour commencer, vous pouvez programmer votre module micro :bit afin que ce dernier affiche les données récupérées des capteurs.
 
 
-Si vous programmez le micro :bit en micro-python, vous disposez du code contrôleur d’un
-écran OLED Adafruit sur le git : https://github.com/CPELyon/microbit_ssd1306. Un exemple
-d’utilisation de la bibliothèque est dans le sous-dossier /samples/hello-world/.
+Etant donnez que nous avons programmé en micro-python, nous nous sommes basé sur le git : https://github.com/CPELyon/microbit_ssd1306 Pour controler l'écran OLED Adafruit.
+Un exemple d’utilisation de la bibliothèque est dans le sous-dossier /samples/hello-world/.
 Dans le code donné, on utilise l’interface I2C pour pouvoir envoyer les informations à afficher,
-on positionne les données en indiquant la ligne et colonnes à utiliser, la distribution des pins dans
-la carte est présenté dans la figure 2.
-
+on positionne les données en indiquant la ligne et colonnes à utiliser.
 
 Communications avec la passerelle
 Cette étape englobe deux rôles. En effet, il faut que votre objet soit capable d’envoyer les
@@ -43,6 +40,8 @@ d’affichage à chaque objet. Les données de configuration seront reçus à tr
 3
 — LT : Indique que la Luminosité sera affiché en premier, puis la Température
 
+La configuration des capteurs est expliqué en détail dans le ReadMe du dossier Microbit_controller.
+
 ## Exercice 3 : configuration de la passerelle et TODO
 
 Le PC, dans un premier temps, doit être configuré pour stocker les données reçues au format
@@ -55,11 +54,9 @@ Exemple de code serveur
 
 Le code d’un serveur effectuant les tâches demandées au point précédent est disponible sur :
 https://github.com/CPELyon/4irc-aiot-mini-projet/blob/master/controller.py
-Dans ce code python à exécuter dans un PC linux et à adapter pour d’autres systèmes d’exploitation, un serveur est démarré sur le port 10000 pour écouter les requêtes UDP selon le protocole
-décrit précédemment.
+Dans ce code python à exécuter dans un PC linux et à adapter pour d’autres systèmes d’exploitation, un serveur est démarré sur le port 10000 pour écouter les requêtes UDP selon le protocole décrit précédemment.
 
-L’écriture et lecture dans la sortie UART est aussi géré dans ce code, faites attention au port
-qui est associé au micro :bit pour le faire correspondre à celui défini dans le code.
+Le code a été adapté pour être executé depuis nos systèmes Linux personnels.
 
 #### Comment lancer le serveur ?
 
