@@ -20,8 +20,9 @@ def Db_connect():
 
 
 def Db_Add_data(data):  # Permet d'ajouter une ligne a la BDD a partir d'un objet JSON
-    payload = []
 
+    print(data)
+    
     try:
 
         client = Db_connect()
@@ -29,13 +30,15 @@ def Db_Add_data(data):  # Permet d'ajouter une ligne a la BDD a partir d'un obje
         parsedData = json.loads(data)
 
         now = str(datetime.now())
-        # conversion temperature en Kelvin pour ajout en base
         value = parsedData["value"]
         
         
         if (parsedData["type"] == "T"):
             dataType = "temperature"
-                    
+
+        if (parsedData["type"] == "L"):
+            dataType = "luminosite"
+
         json_body = [
             {
                 "measurement": dataType,

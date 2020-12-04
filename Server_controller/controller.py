@@ -11,7 +11,7 @@ import threading
 
 import db_control
 
-HOST = "10.0.0.26"
+HOST = "0.0.0.0"
 UDP_PORT = 10000
 MICRO_COMMANDS = ["TL", "LT"]
 #FILENAME        = "values.txt"
@@ -77,26 +77,40 @@ def sendUARTMessage(msg):
 
 
 def ser_listen(message):
-    sensorId = message[0]
-    messageType = message[1]
-    messageContent = message[2]
+    
+    print(message)
+    messageArray = message.split("/")
+
+
+    sensorId = messageArray[0]
+    messageType = messageArray[1]
+    messageContent = messageArray[2]
+    
+    print(messageContent)
 
     if (messageType == "data"):
         dataArray = messageContent.split("&")
         temp =  (dataArray[0]).split(":")[1]
-        lum =  (dataArray[1]).split(":")[1]
+        lum =  ((dataArray[1]).split(":")[1]).rstrip()
+
 
         tempJson = '{ "value":" '+ temp + '", "type":"T", "sensor":"'+ sensorId +  '"}'
-        lumJson  = '{ "value":" '+ lum + '", "type":"L", "sensor":"'+ sensorId +  '"}'
+        lumJson  = '{ "value":"'+ lum + '", "type":"L", "sensor" : "' + sensorId +  '"}'
+
+
+
+        #print("adding data : \n" + tempJson + "\n" + lumJson)
+
 
         db_control.Db_Add_data(tempJson)
         db_control.Db_Add_data(lumJson)
-        print("adding data : \n" + tempJson + "\n" + lumJson)
+
 
     elif (messageType == "error"):
         print(messageContent)
     else :
-        print("gateway unknown message : " +  message)
+        print("gateway unknown message : ")
+        print(message)
 
 
 
@@ -115,15 +129,16 @@ if __name__ == '__main__':
         print("Server started at {} port {}".format(HOST, UDP_PORT))
 
         while ser.isOpen():
+            data = ser.readline()
+            data_str = data.decode()
+            ser_listen(data_str)
+            #db_control.Db_Add_data(data_str)
+            LAST_VALUE = data_str
+            #print(data_str)
 
-            if (ser.inWaiting() > 0):  # if incoming bytes are waiting
-                data_str = ser.read(ser.inWaiting())
-                ser_listen(data_str)
-                #print(data_str.decode())
-                LAST_VALUE = data_str
-                #print(data_str)
     except (KeyboardInterrupt, SystemExit):
         server.shutdown()
         server.server_close()
         ser.close()
         exit()
+
