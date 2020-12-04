@@ -2,37 +2,35 @@
 
 # Projet - Mise en place d’une mini-architecture IoT
 
-## Exercice 1 : Mise en place du réseau TODO
+## Exercice 1 : Mise en place du réseau
 
 Dans l'objectif de définir un protocole de communication sécurisé nous souhaitions mettre en place une identification via CHAP et chiffrer notre canal de communication en utilisant l'algorithme de chiffrement AES-128. Due aux limitations technologique de la microbit nous avons mis en place un système authentification basé sur des pins codés directement dans le code source. De plus la communication entre les microbit n'est pas chiffré, la mise en plus d'un chiffrement Caesar, n'aurait fait que ralentir les processus de communications alors qu'il assure un niveau de sécurité fragile.
 
 
-## Exercice 2 : configuration des capteurs TODO
+## Exercice 2 : configuration des capteurs
 
 Une étape importante de la mise en place de l’infrastructure côté objet consiste à configurer l’objet à déployer dans les bureaux, afin que ce dernier puisse collecter les informations souhaitées :
 température et luminosité.
 Les informations doivent être envoyées au serveur (passerelle) et enfin afficher les informations dans l’ordre demandé par le serveur.
 Pour ce faire, vous disposez d’un micro-contrôleur micro :bit qui compte plusieurs capteurs intégrés. De plus, l’objet dispose d’un afficheur OLED sur lequel les données pourront être affichées.
 
-2 Affichage sur l’écran OLED
-Une partie de la configuration de l’objet est l’affichage des données sur l’écran OLED qui accompagne le module micro :bit. Avant d’afficher directement les informations dans l’ordre défini par le serveur, assurez vous de comprendre comment afficher des informations sur cet écran. Ainsi,
-pour commencer, vous pouvez programmer votre module micro :bit afin que ce dernier affiche les données récupérées des capteurs.
-
+## Affichage sur l’écran OLED
 
 Etant donnez que nous avons programmé en micro-python, nous nous sommes basé sur le git : https://github.com/CPELyon/microbit_ssd1306 Pour controler l'écran OLED Adafruit.
 Un exemple d’utilisation de la bibliothèque est dans le sous-dossier /samples/hello-world/.
 Dans le code donné, on utilise l’interface I2C pour pouvoir envoyer les informations à afficher,
 on positionne les données en indiquant la ligne et colonnes à utiliser.
 
-Communications avec la passerelle
-Cette étape englobe deux rôles. En effet, il faut que votre objet soit capable d’envoyer les
+## Communications avec la passerelle
+
+Cette étape englobe deux rôles. En effet, il faut que l'objet soit capable d’envoyer les
 informations récoltées à la passerelle, mais qu’il soit également capable d’écouter les messages
 envoyés par la même afin de pouvoir afficher le contenu des messages sur l’écran OLED.
 Le format des messages à envoyer à la passerelle est libre, ainsi les données peuvent être envoyées
 brutes (sans traitement côté objet), ou bien suivant un format précis (type ficher de configuration
-format JSON par exemple). Dans un premier temps, n’utilisez aucun format et envoyez les données
-brutes au serveur, le choix d’un format est optionnel.
-Le micro :bit attaché au PC fera le rôle de récepteur RF 2.4GHz de la passerelle et recevra
+format JSON par exemple). Dans un premier temps, on utilise aucun format et on envoie les données
+brutes au serveur. Ensuite le choix du type Data a été choisie pour les messages transmis.
+Le micro:bit attaché au PC fera le rôle de récepteur RF 2.4GHz de la passerelle et recevra
 les données de la part des capteurs déployés, mais sera aussi en mesure d’envoyer la configuration
 d’affichage à chaque objet. Les données de configuration seront reçus à travers son interface USB
 (UART), indiquant l’ordre d’affichage des données par 2 lettres majuscules, ainsi :
@@ -42,7 +40,7 @@ d’affichage à chaque objet. Les données de configuration seront reçus à tr
 
 La configuration des capteurs est expliqué en détail dans le ReadMe du dossier Microbit_controller.
 
-## Exercice 3 : configuration de la passerelle et TODO
+## Exercice 3 : configuration de la passerelle
 
 Le PC, dans un premier temps, doit être configuré pour stocker les données reçues au format
 brut dans un fichier texte, de cette façon il fera aussi le rôle de serveur.
