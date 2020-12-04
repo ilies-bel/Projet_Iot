@@ -1,11 +1,38 @@
 #### BELDJILALI Ilies, CHAPUIS Flavian, FOLLÉAS Brice, GAUTIER Gwendal, GONNET Anthony
 
-# Microbit_controllet
+# Microbit_controller
 
-Cette partie du projet va s'intéresser sur l'initialisation et le pilotage de de la passerelle de la microbit, ainsi que du capteur de température.
+Cette partie du projet va s'intéresser à l'initialisation et au pilotage de la passerelle microbit, ainsi que du contrôleur de capteur de température et de luminosité.
 
 ## Controle de la passerelle - gateway_control.py
 
-Son utilité est d'initialiser la passerelle de chacune des microbit est attribuant un pin d'entrée pour le capteur, et en initialisant l'uart de la microbit.
+La passerelle est une carte micro:bit dont  l'utilité est de servir de passerelle entre le contrôleur de capteur en bout de chaîne, et le serveur. 
 
-4 messages radio différents sont envoyés 
+La passerelle communique avec son homologue micro:bit par radio, et avec le serveur en Uart.
+
+## Contrôle du contrôleur de capteurs - main.py 
+
+Le contrôleur de capteurs est un élément de bout de chaîne qui possède 3 fonctions :
+
+1. Répondre aux requêtes de données du serveur,
+2. Récupérer lesvaleurs relevés par les capteurs de température et de luminosité,
+3. Afficher ces valeurs sur l'écran OLED associé. 
+
+## Communication entre les deux micro:bit
+
+Le contrôleur de capteur initie la communication entre les deux éléments en envoyant son code PIN pour être reconnu par la passerelle, dans un message de type "ask". 
+La passerelle répond à ce message en renvoyant au contrôleur une id qui correspondra à son numéro.
+
+Le capteur peut ensuite envoyer ses données dans des messages de type data sous la forme :
+```
+    idDestination/data/T:vaT&L:valL
+```
+où valT et valL sont les valeurs récupérés par les capteurs. 
+
+## Pilotage par la passerelle 
+
+La passerelle est susceptible de transmettre des ordres de pilotage au contrôleur de capteur pour modifier son affichage OLED. Dans ce cas, le message prendra la forme : 
+```
+  idDestination/cmd/commande
+```
+Où commande correspond à TL ou Lt, déterminant l'ordre dans lequel sont affichés les valeurs. 
