@@ -29,12 +29,16 @@ class ThreadedUDPRequestHandler(socketserver.BaseRequestHandler):
 
         if data_str != "":
             if data_str in MICRO_COMMANDS:  # Send message through UART
-                sendUARTMessage("00/cmd/" + data_str)
+                uartMessage = "00/cmd/" + data_str
+
+                sendUARTMessage(uartMessage.encode('utf-8'))
 
             elif data_str == "getValues()":  # Sent last value received from micro-controller
-                print(LAST_VALUE)
                 
-                udpMessage = "Temp: " + LAST_VALUE + "   "
+                udpMessage = "Temp: " + LAST_VALUE + " C "
+                
+                print("udp send : <" , udpMessage , ">")
+
 
                 socket.sendto( bytes(udpMessage.encode('utf-8')) , self.client_address)
 
@@ -78,14 +82,14 @@ def initUART():
 
 def sendUARTMessage(msg):
     ser.write(msg)
-    print("Message <" + msg + "> sent to micro-controller.")
+    print("Message sent to micro-controller.")
+    print(msg)
 
 
 def ser_listen(message):
     
     global LAST_VALUE 
 
-    print(message)
     messageArray = message.split("/")
 
 
@@ -93,7 +97,8 @@ def ser_listen(message):
     messageType = messageArray[1]
     messageContent = messageArray[2]
     
-    print(messageContent)
+    print("serial recieved : ")
+    print(message)
 
     if (messageType == "data"):
         dataArray = messageContent.split("&")
@@ -101,8 +106,6 @@ def ser_listen(message):
         lum =  ((dataArray[1]).split(":")[1]).rstrip()
 
         LAST_VALUE = temp
-        print("assign LAST VALUE " )
-        print( LAST_VALUE)
 
 
         tempJson = '{ "value":" '+ temp + '", "type":"T", "sensor":"'+ sensorId +  '"}'
@@ -110,7 +113,7 @@ def ser_listen(message):
 
 
 
-        #print("adding data : \n" + tempJson + "\n" + lumJson)
+        print("Database adding data : \n" + tempJson + "\n" + lumJson)
 
 
         db_control.Db_Add_data(tempJson)
