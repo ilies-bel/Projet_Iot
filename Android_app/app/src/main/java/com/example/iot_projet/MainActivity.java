@@ -5,18 +5,18 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 
 //for UDP
-import com.example.iot_projet.R;
 
-import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.SocketException;
-import java.net.UnknownHostException;
+
+import static java.lang.Integer.parseInt;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -40,14 +40,14 @@ public class MainActivity extends AppCompatActivity {
     public TextView txtView = null;
 
     public EditText sendMsg;
-
-    /*ip address info*/
-    public EditText ip_Num;
-    public TextView ip_text;
+    public Switch s;
 
     public static byte gto[];
 
     public static String write_Msg;
+    public  static String ip_Num;
+    public  String ip_text;
+    public EditText udp_port;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,22 +59,54 @@ public class MainActivity extends AppCompatActivity {
         // textView event registration
         txtView = (TextView) findViewById(R.id.textView);
 
-        ip_Num = (EditText) findViewById(R.id.send_ip);
+        s = (Switch) findViewById(R.id.oledPilot);
+
+
+        s.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                final TextView switchBtn_txtView = (TextView) findViewById(R.id.switchBtn_txtView);
+
+
+                if (isChecked) {
+                    Log.d("Switch", "Switch on");
+                    switchBtn_txtView.setText("Temperatur first");
+                    msg = "TL";
+
+                } else {
+                    Log.d("Switch", "Switch off");
+                    switchBtn_txtView.setText("Luminosity first");
+                    msg = "LT";
+
+                }
+
+                mSendData = new SendData();
+
+
+                write_Msg = msg;
+
+                // send data
+                mSendData.start();
+
+            }
+        });
 
         // button clicked
         btnGetValues.setOnClickListener(new View.OnClickListener() { //Envoie de la demande de données au serveur
             @Override
             public void onClick(View v) {
 
+
                 Log.d("layout" , "Send data button clicked");
                 // create SendData class
                 mSendData = new SendData();
+
+                msg = "getValues()";
+                write_Msg = msg;
+
                 // send data
                 mSendData.start();
 
-                msg = "getValues()";
 
-                write_Msg = msg.toString();
             }
         });
 
@@ -85,23 +117,31 @@ public class MainActivity extends AppCompatActivity {
 
     // Thread class for Data send
     class SendData extends Thread{
+
+        TextView ip_view =  findViewById(R.id.server_ip);
+        String ip_value =   ip_view.getText().toString();
+
+        TextView udpPort_view =  findViewById(R.id.server_port);
+        int port_value = Integer.valueOf(udpPort_view.getText().toString());
+
+
         public void run(){
             System.out.println("this is Thread class");
             try{
                 // create UDP communication socket
                 DatagramSocket socket = new DatagramSocket();
                 // sever address variable
-                InetAddress serverAddr = InetAddress.getByName(sIP);
 
-                Log.d("UDP", String.valueOf(serverAddr));
+                InetAddress serverAddr = InetAddress.getByName(ip_value);
+
 
                 // create send data
                 byte[] buf = write_Msg.getBytes();
 
-                Log.d("UDP", String.valueOf(buf));
+
 
                 // change datagram packet
-                DatagramPacket packet = new DatagramPacket(buf, buf.length, serverAddr, sPORT);
+                DatagramPacket packet = new DatagramPacket(buf, buf.length, serverAddr, port_value);
                 Log.d("UDP", "send packet.... " + "< " + new String(buf) + " >");
 
                 //System.out.print("Send data -> ");
@@ -121,6 +161,8 @@ public class MainActivity extends AppCompatActivity {
                 String msg = new String(packet.getData());
 
                 // view textView
+                txtView.setText("");
+
                 txtView.setText(msg);
 
 
