@@ -21,8 +21,8 @@ def Db_connect():
 
 def Db_Add_data(data):  # Permet d'ajouter une ligne a la BDD a partir d'un objet JSON
 
-    print(data)
-    
+    #print(data)
+
     try:
 
         client = Db_connect()
@@ -52,9 +52,11 @@ def Db_Add_data(data):  # Permet d'ajouter une ligne a la BDD a partir d'un obje
             }
         ]
 
-        print(json_body)
+        #print(json_body)
         
         client.write_points(json_body, database='data', time_precision='ms')
+
+        print("Database succeed")
 
     except (InfluxDBClientError, InfluxDBServerError) as e:
         print("unable to write on database : ", e)

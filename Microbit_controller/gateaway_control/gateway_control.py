@@ -11,17 +11,19 @@ radio.config(power=7)
 
 
 def uart_handle():
-    msg_bytes = uart.read()
-
-    messageArray = msg_bytes.split("/")
+    msg_bytes = (uart.read())
+    msg_str = str(msg_bytes, 'UTF-8')
+    
+    messageArray = msg_str.split("/")
     messageType = messageArray[1]
     messageContent = messageArray[2]
 
     if messageType == "cmd":
+        display.scroll("send cmd")
         radio.send(msg_bytes)
 
     else:
-        Uart_send("error : unknown command")
+        Uart_send("00/err/unknown command")
 
 
 def radio_handle(message):
@@ -50,12 +52,13 @@ def Uart_send(msg):
 while True:
 
     if (button_a.is_pressed()):
-        radio.send('00/cmd/TL')
-        print('00/cmd/TL')
+        print('00/data/T:25&L:255')
+        display.scroll('uart send')
+
 
 
     if (button_b.is_pressed()):
-        radio.send('00/cmd/LT')
+        print('00/cmd/LT')
 
     message = radio.receive()
 
