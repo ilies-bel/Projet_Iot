@@ -34,7 +34,7 @@ Par exemple, En utilisant `show measurements on data` on a accès à la liste de
 
 Les requêtes que nous faisons pour afficher les données de notre base sont donc les requêtes suivantes :
 - `SELECT "value" FROM "temperature"` 
-- `SELECT "value" FROM "luminosity"`
+- `SELECT "value" FROM "luminosite"`
 
 ### Installer Grafana
 
