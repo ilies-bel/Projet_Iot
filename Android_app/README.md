@@ -16,7 +16,7 @@ L'interface peut se décomposer en 4 parties (de haut en bas) :
  - Quatrième partie : Elle se compose d'un bouton, c'est sur ce bouton que l'utilisateur devra appuyer lorsqu'il aura configuré la partie 1 et 2 afin de commencer la communication.
 
 ## Envoie UDP
-L'envoie d'une donnée par UDP se fait dans la class SendData. Cette classe commence par initialiser le datagramme et l'adresse du serveur. On charge par la suite le packet UDP par la ligne 104 : 
+L'envoie d'une donnée par UDP se fait dans la classe SendData. Cette classe commence par initialiser le datagramme et l'adresse du serveur. On charge par la suite le packet UDP par la ligne 104 : 
 ```
 DatagramPacket packet = new DatagramPacket(buf, buf.length, serverAddr, sPORT);
 ```
@@ -24,14 +24,14 @@ Le paquet est ensuite clairement envoyé à la ligne 112 :
 ```
 socket.send(packet);
 ```
-Bien sûr le programme est ponctué de différentes ligne de log qui permettent un débogage plus clair de l'application.
+Bien sûr le programme est ponctué de différentes lignes de log qui permettent un débogage plus clair de l'application.
 
 ## Écoute UDP
-L'écoute UDP s'effectue sur la même classe que l'envoie UDP. C'est à dire "SendData". En pratique cette classe après avoir effectué son envoie va se mettre à écouter. Elle continura son écoute jusqu'à qu'un packet est été trouvé :
+L'écoute UDP s'effectue sur la même classe que l'envoie UDP. C'est à dire "SendData". En pratique cette classe après avoir effectuée son envoie va se mettre à écouter. Elle continura son écoute jusqu'à qu'un packet ai été trouvé :
 ```
 socket.receive(packet);
 Log.d("UDP", "Receive :" + new String(packet.getData()));
 ```
 
-## Affichege de la donnée
-Lorsqu'une donné esr reçue par UDP, elle est de type bytes. La donnée que nous voulont est de type int, il s'agira dès lors de traduire ce byte en int. Cela s'effectue grâce à la classe "byte_to_ascii"
+## Affichage de la donnée
+Lorsqu'une donnée est reçue par UDP, elle est de type byte. Nous voulons cepependant aficher une donnée de type int, il s'agira dès lors de traduire ce byte en int. Cela s'effectue grâce à la classe "byte_to_ascii"
