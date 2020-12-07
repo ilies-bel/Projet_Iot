@@ -22,8 +22,21 @@ Si vous rencontrez un problème de connexion refusée, executez la commande suiv
 ```bash
 sudo influxd
 ```
+### Utilisation de InfluxDB
 
-### Installing Grafana
+Une fois que votre service est lancé côté serveur, vous pouvez gérer les données en utilisant la commande `influx` et ainsi voir les différentes données sur vos *databases*.
+
+En utilisant `show databases` on peut voir les différentes *databases* d'InfluxDb. La base qui nous intéresse est data qui récupère nos différentes mesures (température et luminosité).
+
+> Ne pas oublier d'utiliser `USE data` pour spécifier quelle database est utilisée.
+
+Par exemple, En utilisant `show measurements on data` on a accès à la liste des différentes valeurs du champ *measurements*. On va donc remplacer *measurements* par les champs qui nous intéresse.
+
+Les requêtes que nous faisons pour afficher les données de notre base sont donc les requêtes suivantes :
+- `SELECT "value" FROM "temperature"` 
+- `SELECT "value" FROM "luminosity"`
+
+### Installer Grafana
 
 Pour installer Grafana sur Windows, allez sur la [documentation d'installation](https://grafana.com/docs/grafana/latest/installation/windows/)
 
